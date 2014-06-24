@@ -17,13 +17,18 @@
 = javascript_include_tag "rails_admin/custom/rails_admin_globalize.js"
 = stylesheet_link_tag "rails_admin/custom/rails_admin_globalize.css"
 
-%h2= "Translating into #{@target_locale.upcase}"
+- if @already_translated_locales.include?(@target_locale.to_s)
+  %h2= "Editing #{@target_locale.upcase} Translation"
+- else
+  %h2= "Add New #{@target_locale.upcase} Translation"
 
 .row-fluid
-  .span2
-    = select_tag 'target_locale', options_for_select(@already_translated_locales), :prompt => "Already Translated Locales", :id => "target_locale_already_select", :"data-target-url" => rails_admin.globalize_path(@object.class.to_s.split("::").map(&:underscore).join("~"), @object.id)
-  .span2
-    = select_tag 'target_locale', options_for_select(@not_yet_translated_locales), :prompt => "Not-Yet-Translated Locales", :id => "target_locale_not_yet_select", :"data-target-url" => rails_admin.globalize_path(@object.class.to_s.split("::").map(&:underscore).join("~"), @object.id)
+  -# .span2
+    -# = select_tag 'target_locale', options_for_select(@already_translated_locales), :prompt => "Already Translated Locales", :id => "target_locale_already_select", :"data-target-url" => rails_admin.globalize_path(@object.class.to_s.split("::").map(&:underscore).join("~"), @object.id)
+  -# .span2
+    -# = select_tag 'target_locale', options_for_select(@not_yet_translated_locales), :prompt => "Not-Yet-Translated Locales", :id => "target_locale_not_yet_select", :"data-target-url" => rails_admin.globalize_path(@object.class.to_s.split("::").map(&:underscore).join("~"), @object.id)
+  .span4
+    = select_tag 'target_locale', options_for_select(["Already Translated Locales"] + @already_translated_locales + ["Not-Yet-Translated Locales"] + @not_yet_translated_locales, :disabled => ["Already Translated Locales", "Not-Yet-Translated Locales"]), :prompt => "Or pick a different locale", :id => "target_locale_not_yet_select", :"data-target-url" => rails_admin.globalize_path(@object.class.to_s.split("::").map(&:underscore).join("~"), @object.id)
 
 = form_for @object, :url => rails_admin.globalize_path(@object.class.to_s.split("::").map(&:underscore).join("~"), @object.id), :html => {:class => 'globalize-form'} do |form|
   = hidden_field_tag 'target_locale', @target_locale

@@ -34,7 +34,7 @@ module RailsAdmin
         end
 
         register_instance_option :http_methods do
-          [:get,:patch]
+          [:get,:put]
         end
 
         register_instance_option :controller do
@@ -42,6 +42,7 @@ module RailsAdmin
           Proc.new do
             @available_locales = (I18n.available_locales - [I18n.locale])
             @available_locales = @object.available_locales if @object.respond_to?("available_locales")
+            @available_locales.sort!
 
             @already_translated_locales = []
             @already_translated_locales = @object.translated_locales.map(&:to_s) if @object.respond_to?("translated_locales")
@@ -49,7 +50,7 @@ module RailsAdmin
             @not_yet_translated_locales = @available_locales - @already_translated_locales
 
             if request.get?
-              @target_locale = params[:target_locale] || @available_locales.first || I18n.locale
+              @target_locale = (params[:target_locale] || I18n.locale).to_sym
 
             else
               result = ::Globalize.with_locale params[:target_locale] do
